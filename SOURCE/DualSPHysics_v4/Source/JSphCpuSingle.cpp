@@ -788,10 +788,7 @@ void JSphCpuSingle::RunFloating(double dt,bool predictor){
   }
 }
 
-//==============================================================================
-/// Inicia proceso de simulacion.
-/// Initial processing of simulation.
-//==============================================================================
+// 开始运行
 void JSphCpuSingle::Run(std::string appname,JCfgRun *cfg,JLog2 *log){
   const char* met="Run";
   if(!cfg||!log)return;
