@@ -321,12 +321,10 @@ void JSph::LoadConfig(const JCfgRun *cfg) {
     if (cfg->PosDouble == 0) {
         Psimple = true;
         SvDouble = false;
-    }
-    else if (cfg->PosDouble == 1) {
+    } else if (cfg->PosDouble == 1) {
         Psimple = false;
         SvDouble = false;
-    }
-    else if (cfg->PosDouble == 2) {
+    } else if (cfg->PosDouble == 2) {
         Psimple = false;
         SvDouble = true;
     }
@@ -394,15 +392,15 @@ void JSph::LoadConfig(const JCfgRun *cfg) {
     }
 }
 
-//==============================================================================
-/// Loads the case configuration to be executed.
-//==============================================================================
+
+// 载入 case 配置
 void JSph::LoadCaseConfig() {
     const char *met = "LoadCaseConfig";
     FileXml = DirCase + CaseName + ".xml";
-    if (!fun::FileExists(FileXml))RunException(met, "Case configuration was not found.", FileXml);
+    if (!fun::FileExists(FileXml)) RunException(met, "Case configuration was not found.", FileXml);
     JXml xml;
     xml.LoadFile(FileXml);
+    // 非零计算常量
     JSpaceCtes ctes;
     ctes.LoadXmlRun(&xml, "case.execution.constants");
     JSpaceEParms eparms;
