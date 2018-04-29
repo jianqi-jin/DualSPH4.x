@@ -56,17 +56,14 @@ void JSphCpuSingle::UpdateMaxValues(){
   MaxMemoryCpu=max(MaxMemoryCpu,m);
 }
 
-//==============================================================================
-/// Carga la configuracion de ejecucion.
-/// Load the execution configuration.
-//==============================================================================
+
+// 载入参数的 Helper
 void JSphCpuSingle::LoadConfig(JCfgRun *cfg){
   const char met[]="LoadConfig";
-  //-Load OpenMP configuraction / Carga configuracion de OpenMP
+  // 载入 OpenMP 配置
   ConfigOmp(cfg);
-  //-Load basic general configuraction / Carga configuracion basica general
+  // 载入基本参宿
   JSph::LoadConfig(cfg);
-  //-Checks compatibility of selected options.
   Log->Print("**Special case configuration is loaded");
 }
 
@@ -794,13 +791,11 @@ void JSphCpuSingle::Run(std::string appname,JCfgRun *cfg,JLog2 *log){
   if(!cfg||!log)return;
   AppName=appname; Log=log;
 
-  //-Configure timers / Configura timers
-  //-------------------
+  // 运行计时器
   TmcCreation(Timers,cfg->SvTimers);
   TmcStart(Timers,TMC_Init);
 
-  //-Load parameters and values of input / Carga de parametros y datos de entrada
-  //-----------------------------------------
+  // 载入参数
   LoadConfig(cfg);
   LoadCaseParticles();
   ConfigConstants(Simulate2D);
