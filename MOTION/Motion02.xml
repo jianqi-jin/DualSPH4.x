@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<case>
+    <casedef>
+        <constantsdef>
+            <lattice bound="2" fluid="1" />
+            <gravity x="0" y="0" z="-9.81" />
+            <rhop0 value="1000" />
+            <hswl value="0" auto="true" />
+            <gamma value="7" />
+            <coefsound value="10" />
+            <coefh value="0.866025" />
+            <cflnumber value="0.2" />	
+        </constantsdef>
+        <mkconfig boundcount="230" fluidcount="10">
+            <mkorientfluid mk="0" orient="Xyz" />
+        </mkconfig>
+        <geometry>
+            <definition dp="0.02">
+                <pointmin x="0" y="0" z="0" />
+                <pointmax x="1" y="1" z="1" />
+            </definition>
+            <commands>
+                <mainlist>
+                    <setshapemode>real | bound</setshapemode>
+                    <setdrawmode mode="solid" />
+                    <setmkbound mk="0" />
+                    <drawbox>
+                        <boxfill>all</boxfill>
+                        <point x="0" y="0" z="0" />
+                        <size x="2.05" y="1.35" z="0.02" />
+                    </drawbox>
+                    <move x="0" y="0" z="0.02" />
+                    <setmkbound mk="1" />
+                    <drawbox>
+                        <boxfill>all</boxfill>
+                        <point x="0" y="0" z="0" />
+                        <size x="0.05" y="0.05" z="0.05" />
+                    </drawbox>
+                    <shapeout file="" />
+                </mainlist>
+            </commands>
+        </geometry>
+        <motion>
+            <objreal ref="1">
+                <begin mov="1" start="0" />
+                <mvrect id="1" duration="2" next="2">
+                    <vel x="1" y="0" z="0" units_comment="m/s" />
+                </mvrect>
+                <mvrect id="2" duration="1" next="1">
+                    <vel x="-2" y="0" z="0" units_comment="m/s" />
+                </mvrect>
+                <begin mov="3" start="0.5" />
+                <mvrect id="3" duration="1.3" next="4">
+                    <vel x="0" y="1" z="0" units_comment="m/s" />
+                </mvrect>
+                <mvrect id="4" duration="1.3" next="3">
+                    <vel x="0" y="-1" z="0" units_comment="m/s" />
+                </mvrect>
+            </objreal>
+        </motion>
+    </casedef>
+    <execution>
+        <parameters>
+            <parameter key="TimeMax" value="10" comment="Time of simulation" />
+            <parameter key="TimeOut" value="0.02" comment="Time out data" />
+        </parameters>
+        <particles np="10080" nb="10080" nbf="9968" mkboundfirst="11" mkfluidfirst="1">
+            <fixed mkbound="0" mk="11" begin="0" count="9968" />
+            <moving mkbound="1" mk="12" begin="9968" count="112" refmotion="0" />
+        </particles>
+        <constants>
+            <gravity x="0" y="0" z="-9.81" units_comment="m/s^2" />
+            <cflnumber value="0.2" />
+            <gamma value="7" />
+            <rhop0 value="1000" units_comment="kg/m^3" />
+            <eps value="0.5" units_comment="m/s^2" />
+            <dp value="0.02" units_comment="metres (m)" />
+            <h value="2.9999986012E-002" units_comment="metres (m)" />
+            <b value="0.0000000000E+000" units_comment="metres (m)" />
+            <massbound value="4.0000000000E-003" units_comment="kg" />
+            <massfluid value="8.0000000000E-003" units_comment="kg" />
+        </constants>
+        <motion>
+            <objreal ref="0">
+                <begin mov="1" start="0" />
+                <begin mov="3" start="0.5" />
+                <mvrect id="1" duration="2" next="2">
+                    <vel x="1" y="0" z="0" units_comment="m/s" />
+                </mvrect>
+                <mvrect id="2" duration="1" next="1">
+                    <vel x="-2" y="0" z="0" units_comment="m/s" />
+                </mvrect>
+                <mvrect id="3" duration="1.3" next="4">
+                    <vel x="0" y="1" z="0" units_comment="m/s" />
+                </mvrect>
+                <mvrect id="4" duration="1.3" next="3">
+                    <vel x="0" y="-1" z="0" units_comment="m/s" />
+                </mvrect>
+            </objreal>
+        </motion>
+    </execution>
+</case>

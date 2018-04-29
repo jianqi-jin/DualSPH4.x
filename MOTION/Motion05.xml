@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<case>
+    <casedef>
+        <constantsdef>
+            <lattice bound="2" fluid="1" />
+            <gravity x="0" y="0" z="-9.81" />
+            <rhop0 value="1000" />
+            <hswl value="0" auto="true" />
+            <gamma value="7" />
+            <coefsound value="10" />
+            <coefh value="0.866025" />
+            <cflnumber value="0.2" />	
+        </constantsdef>
+        <mkconfig boundcount="230" fluidcount="10">
+            <mkorientfluid mk="0" orient="Xyz" />
+        </mkconfig>
+        <geometry>
+            <definition dp="0.01">
+                <pointmin x="0" y="0" z="0" />
+                <pointmax x="1" y="1" z="1" />
+            </definition>
+            <commands>
+                <list name="hour">
+                    <drawbox>
+                        <boxfill>all</boxfill>
+                        <point x="0.495" y="0.96" z="0.02" />
+                        <size x="0.01" y="0.03" z="0.005" />
+                    </drawbox>
+                    <rotateline ang="30">
+                        <point x="0.5" y="0.5" z="0" />
+                        <point x="0.5" y="0.5" z="1" />
+                    </rotateline>
+                </list>
+                <mainlist>
+                    <setshapemode>real | bound</setshapemode>
+                    <setdrawmode mode="face" />
+                    <setmkbound mk="0" />
+                    <drawbox>
+                        <boxfill>all</boxfill>
+                        <point x="0" y="0" z="0" />
+                        <size x="1" y="1" z="0.02" />
+                    </drawbox>
+                    <setmkbound mk="1" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <runlist name="hour" />
+                    <matrixreset />
+                    <setmkbound mk="2" />
+                    <drawbox cmt="central">
+                        <boxfill>all</boxfill>
+                        <point x="0.4975" y="0.4975" z="0" />
+                        <size x="0.005" y="0.005" z="0.062" />
+                    </drawbox>
+                    <setmkbound mk="3" />
+                    <drawpyramid cmt="hours">
+                        <point x="0.5" y="0.5" z="0.06" />
+                        <point x="0.47" y="0.47" z="0.035" />
+                        <point x="0.53" y="0.47" z="0.035" />
+                        <point x="0.5" y="0.75" z="0.035" />
+                    </drawpyramid>
+                    <setmkbound mk="4" />
+                    <drawprism cmt="minutes">
+                        <point x="0.47" y="0.47" z="0.02" />
+                        <point x="0.53" y="0.47" z="0.02" />
+                        <point x="0.5" y="0.94" z="0.02" />
+                        <point x="0.47" y="0.47" z="0.03" />
+                        <point x="0.53" y="0.47" z="0.03" />
+                        <point x="0.5" y="0.94" z="0.03" />
+                    </drawprism>
+                    <shapeout file="" />
+                </mainlist>
+            </commands>
+        </geometry>
+        <motion>
+            <objreal ref="3">
+                <begin mov="1" start="0" />
+                <mvrot id="1" duration="1000" anglesunits="degrees">
+                    <vel ang="20" units_comment="degrees/s" />
+                    <axisp1 x="0.5" y="0.5" z="0" />
+                    <axisp2 x="0.5" y="0.5" z="1" />
+                </mvrot>
+            </objreal>
+            <objreal ref="4">
+                <begin mov="1" start="0" />
+                <mvrot id="1" duration="1000" anglesunits="degrees">
+                    <vel ang="240" units_comment="degrees/s" />
+                    <axisp1 x="0.5" y="0.5" z="0" />
+                    <axisp2 x="0.5" y="0.5" z="1" />
+                </mvrot>
+            </objreal>
+        </motion>
+    </casedef>
+    <execution>
+        <parameters>
+            <parameter key="TimeMax" value="17" comment="Time of simulation" />
+            <parameter key="TimeOut" value="0.05" comment="Time out data" />
+        </parameters>
+        <particles np="41378" nb="41378" nbf="40154" mkboundfirst="11" mkfluidfirst="1">
+            <fixed mkbound="0" mk="11" begin="0" count="39832" />
+            <fixed mkbound="1" mk="12" begin="39832" count="320" />
+            <fixed mkbound="2" mk="13" begin="40152" count="2" />
+            <moving mkbound="3" mk="14" begin="40154" count="416" refmotion="0" />
+            <moving mkbound="4" mk="15" begin="40570" count="808" refmotion="1" />
+        </particles>
+        <constants>
+            <gravity x="0" y="0" z="-9.81" units_comment="m/s^2" />
+            <cflnumber value="0.2" />
+            <gamma value="7" />
+            <rhop0 value="1000" units_comment="kg/m^3" />
+            <eps value="0.5" units_comment="m/s^2" />
+            <dp value="0.01" units_comment="metres (m)" />
+            <h value="1.4999993006E-002" units_comment="metres (m)" />
+            <b value="0.0000000000E+000" units_comment="metres (m)" />
+            <massbound value="5.0000000000E-004" units_comment="kg" />
+            <massfluid value="1.0000000000E-003" units_comment="kg" />
+        </constants>
+        <motion>
+            <objreal ref="0">
+                <begin mov="1" start="0" />
+                <mvrot id="1" duration="1000" anglesunits="degrees">
+                    <vel ang="20" units_comment="degrees/s" />
+                    <axisp1 x="0.5" y="0.5" z="0" />
+                    <axisp2 x="0.5" y="0.5" z="1" />
+                </mvrot>
+            </objreal>
+            <objreal ref="1">
+                <begin mov="1" start="0" />
+                <mvrot id="1" duration="1000" anglesunits="degrees">
+                    <vel ang="240" units_comment="degrees/s" />
+                    <axisp1 x="0.5" y="0.5" z="0" />
+                    <axisp2 x="0.5" y="0.5" z="1" />
+                </mvrot>
+            </objreal>
+        </motion>
+    </execution>
+</case>

@@ -1,0 +1,25 @@
+GenCase4_linux64	        //v4.0.027 (11-05-2016)
+DualSPHysics4_linux64       //v4.0.056 (18-05-2016)
+DualSPHysics4CPU_linux64    //v4.0.056 (18-05-2016)
+PartVTK4_linux64            //v4.0.019 (15-04-2016)
+PartVTKOut4_linux64         //v4.0.010 (15-04-2016)
+MeasureTool4_linux64        //v4.0.020 (15-04-2016)
+ComputeForces4_linux64	    //v4.0.013 (15-04-2016)
+BoundaryVTK4_linux64        //v4.0.014 (13-04-2016)
+IsoSurface4_linux64         //v4.0.006 (15-04-2016) 
+FloatingInfo4_linux64       //v4.0.004 (13-04-2016)
+
+libcudart.so.5.5                //Library of Cuda5.5
+libcudart.so.7.5                //Library of Cuda7.5
+
+DualSPHysicsMultiphase_3.4_linux64	//v3.4 (16-03-2016)
+
+To run DualSPHysics on GPU, there is no need to install compilers or new 
+software, only an NVIDIA CUDA-enabled GPU card is needed and the last 
+version of the driver must be installed.
+
+Last changes:
+==============
+18-05-2016
+- New version of GenCase4 to fix an error when computing the center of floating bodies.
+- Minor improvements in DualSPHysics4 code.

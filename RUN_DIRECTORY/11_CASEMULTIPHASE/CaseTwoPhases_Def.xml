@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<case app="GenCase v1.3 (14-02-2012)" date="29-01-2015 12:10:22">
+    <casedef>
+        <constantsdef>
+            <lattice bound="2" fluid="1" />
+            <gravity x="0" y="0" z="-9.81" />
+            <cflnumber value="0.1" />
+            <hswl value="0" auto="true" />
+            <coefsound value="20" />
+            <coefficient value="0.92" />
+            <gamma value="7" />
+            <rhop0 value="1000" />
+            <eps value="0.0" />			
+        </constantsdef>
+        <mkconfig boundcount="240" fluidcount="10" />
+        <geometry>
+            <definition dp="0.03">
+                <pointmin x="-0.2" y="1" z="-0.2" />
+                <pointmax x="4.15" y="1" z="4.15" />
+            </definition>
+            <commands>
+                <mainlist>
+                    <setshapemode>dp | bound |fluid</setshapemode>
+                    <setdrawmode mode="full" />
+                    <setmkfluid mk="1" />
+                    <drawbox>
+                        <boxfill>solid</boxfill>
+                        <point x="0" y="0" z="0" />
+                        <size x="4" y="2" z="0.5" />
+                    </drawbox>
+                    <setmkfluid mk="0" />
+                    <drawbox>
+                        <boxfill>solid</boxfill>
+                        <point x="0" y="0" z="0.53" />
+                        <size x="1" y="2" z="0.5" />
+                    </drawbox>
+                    <setdrawmode mode="full" />
+                    <setmkbound mk="1" />
+                    <drawbox>
+                        <boxfill>left| bottom |right</boxfill>
+                        <point x="0" y="0" z="0" />
+                        <size x="4.0" y="2" z="4.0" />
+                    </drawbox>
+                    <shapeout file="" />
+                </mainlist>
+            </commands>
+        </geometry>
+    </casedef>
+    <execution>
+        <parameters>
+            <parameter key="DeltaSPH" value="0.1" comment="DeltaSPH parameter, 0 not applied (def=0.1)" />            
+            <parameter key="DtIni" value="0.000000001" comment="Initial time step" />
+            <parameter key="DtMin" value="0.0000000001" comment="Minimum time step (def=0.00001)" />
+            <parameter key="TimeMax" value="2.0" comment="Time of simulation" />
+            <parameter key="TimeOut" value="0.01" comment="Time out data" />
+            <parameter key="IncZ" value="5" comment="Increase of Z+" />
+            <parameter key="PartsOutMax" value="1" comment="Proportion of fluid particles out allowed (def=1)" />
+	        <parameter key="PhaseCount" value="2" comment="Number of different fluids" />
+
+	        <parameter key="PhaseMkFluid_0" value="0" comment="MkFluid of phase 1" />
+            <parameter key="PhaseRhop0_0" value="1000" comment="Rhop value for phase 1" />
+            <parameter key="PhaseCsound_0" value="80" comment="Csound value for phase 1" />
+            <parameter key="PhaseGamma_0" value="7" comment="Gamma value for phase 1" />
+            <parameter key="PhaseVisco_0" value="0.001" comment="Viscosity value for phase" />           
+            <parameter key="HB_parameter_0" value="1" comment="Use 1 to reduce to Bingham for Newtonian liquid" />
+            <parameter key="HB_Papanastasiou_0" value="0" comment="Use 0 to reduce to HB for Newtonian liquid" />
+            <parameter key="Coh_0" value="0" comment="Cohesion coefficient of the phase" />
+            <parameter key="PhiF_0" value="0" comment="Internal friction angle of the phase" />
+            <parameter key="YieldStrength_0" value="0" comment="Yield strength of phase if constant Yield strength is being used (def=0)" />
+            <parameter key="Phase_0" value="0" comment="Newtonian=0, Non-Newtonian" />
+
+            <parameter key="PhaseMkFluid_1" value="1" comment="MkFluid of phase 1" />
+            <parameter key="PhaseRhop0_1" value="1500" comment="Rhop value for phase 1" />
+            <parameter key="PhaseCsound_1" value="81" comment="Csound value for phase 1" />
+            <parameter key="PhaseGamma_1" value="7" comment="Gamma value for phase 1" />
+            <parameter key="PhaseVisco_1" value="0.002" comment="Viscosity value for phase" />           
+            <parameter key="HB_parameter_1" value="1" comment="Use 1 to reduce to Bingham for Newtonian liquid" />
+            <parameter key="HB_Papanastasiou_1" value="100" comment="Use 0 to reduce to HB for Newtonian liquid" />
+            <parameter key="Coh_1" value="1" comment="Cohesion coefficient of the phase" />
+            <parameter key="PhiF_1" value="35" comment="Internal friction angle of the phase" />
+            <parameter key="YieldStrength_1" value="0" comment="Yield strength of phase if constant Yield strength is being used (def=0)" />
+            <parameter key="Phase_1" value="1" comment="Newtonian=0, Non-Newtonian" />	    
+        </parameters>
+    </execution>
+</case>
