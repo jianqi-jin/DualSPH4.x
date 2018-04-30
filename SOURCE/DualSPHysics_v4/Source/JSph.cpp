@@ -408,7 +408,7 @@ void JSph::LoadCaseConfig() {
     JSpaceParts parts;
     parts.LoadXml(&xml, "case.execution.particles");
 
-    //-Execution parameters.
+    // 执行参数
     switch (eparms.GetValueInt("PosDouble", true, 0)) {
         case 0:
             Psimple = true;
@@ -586,7 +586,7 @@ void JSph::LoadCaseConfig() {
                                    eparms.GetValueNumDouble(key, 5)));
     }
 
-    //-Predefined constantes.
+    // 预定义的常量
     if (ctes.GetEps() != 0)Log->Print("\n*** Attention: Eps value is not used (this correction is deprecated).\n");
     H = (float) ctes.GetH();
     CteB = (float) ctes.GetB();
@@ -598,7 +598,7 @@ void JSph::LoadCaseConfig() {
     MassFluid = (float) ctes.GetMassFluid();
     MassBound = (float) ctes.GetMassBound();
 
-    //-Particle data.
+    // 粒子数据
     CaseNp = parts.Count();
     CaseNfixed = parts.Count(PT_Fixed);
     CaseNmoving = parts.Count(PT_Moving);
@@ -611,7 +611,7 @@ void JSph::LoadCaseConfig() {
     TotalNp = CaseNp;
     IdMax = CaseNp - 1;
 
-    //-Loads and configures MK of particles.
+    // 加载并配置粒子的MK
     LoadMkInfo(&parts);
 
     //-Configuration of WaveGen.
@@ -742,7 +742,7 @@ void JSph::ResetMkInfo() {
 }
 
 //==============================================================================
-/// Load MK information of particles.
+/// 加载粒子MK信息
 //==============================================================================
 void JSph::LoadMkInfo(const JSpaceParts *parts) {
     ResetMkInfo();
@@ -752,9 +752,9 @@ void JSph::LoadMkInfo(const JSpaceParts *parts) {
     MkListFloat = parts->CountBlocks(PT_Floating);
     MkListFluid = parts->CountBlocks(PT_Fluid);
     MkListBound = MkListFixed + MkListMoving + MkListFloat;
-    //-Allocates memory.
+    // 分配内存
     MkList = new StMkInfo[MkListSize];
-    //-Gets info for each block of particles.
+    // 获取粒子的每一块的信息
     for (unsigned c = 0; c < MkListSize; c++) {
         const JSpacePartBlock &block = parts->GetBlock(c);
         MkList[c].begin = block.GetBegin();
@@ -803,10 +803,10 @@ word JSph::CodeSetType(word code, TpParticle type, unsigned value) const {
     const char met[] = "CodeSetType";
     //-Chooses type.
     word tp;
-    if (type == PART_BoundFx)tp = CODE_TYPE_FIXED;
-    else if (type == PART_BoundMv)tp = CODE_TYPE_MOVING;
-    else if (type == PART_BoundFt)tp = CODE_TYPE_FLOATING;
-    else if (type == PART_Fluid)tp = CODE_TYPE_FLUID;
+    if (type == PART_BoundFx) tp = CODE_TYPE_FIXED;
+    else if (type == PART_BoundMv) tp = CODE_TYPE_MOVING;
+    else if (type == PART_BoundFt) tp = CODE_TYPE_FLOATING;
+    else if (type == PART_Fluid) tp = CODE_TYPE_FLUID;
     else RunException(met, "Type of particle is invalid.");
     //-Checks the value.
     word v = word(value & CODE_MASKVALUE);
