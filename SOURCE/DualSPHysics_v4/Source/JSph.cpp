@@ -614,17 +614,17 @@ void JSph::LoadCaseConfig() {
     // 加载并配置粒子的MK
     LoadMkInfo(&parts);
 
-    //-Configuration of WaveGen.
+    // 生成波浪的配置
     if (xml.GetNode("case.execution.special.wavepaddles", false)) {
         WaveGen = new JWaveGen(Log, DirCase, &xml, "case.execution.special.wavepaddles");
     }
 
-    //-Configuration of AccInput.
+    // 配置 AccInput
     if (xml.GetNode("case.execution.special.accinputs", false)) {
         AccInput = new JSphAccInput(Log, DirCase, &xml, "case.execution.special.accinputs");
     }
 
-    //-Loads and configures MOTION.
+    // 载入并配置 MOTION
     MotionObjCount = 0;
     for (unsigned c = 0; c < parts.CountBlocks(); c++) {
         const JSpacePartBlock &block = parts.GetBlock(c);
@@ -643,7 +643,7 @@ void JSph::LoadCaseConfig() {
             RunException(met, "The number of mobile objects is lower than expected.");
     }
 
-    //-Loads floating objects.
+    // 载入漂浮物体
     FtCount = parts.CountBlocks(PT_Floating);
     if (FtCount) {
         AllocMemoryFloating(FtCount);
@@ -667,8 +667,7 @@ void JSph::LoadCaseConfig() {
         }
     } else UseDEM = false;
 
-    //-Carga datos DEM de objetos. (DEM)
-    //-Loads DEM data for the objects. (DEM)
+    // 从 Objects 中载入 DEM 数据
     if (UseDEM) {
         memset(DemObjs, 0, sizeof(StDemData) * DemObjsSize);
         for (unsigned c = 0; c < parts.CountBlocks(); c++) {
@@ -741,9 +740,7 @@ void JSph::ResetMkInfo() {
     MkListSize = MkListFixed = MkListMoving = MkListFloat = MkListBound = MkListFluid = 0;
 }
 
-//==============================================================================
 /// 加载粒子MK信息
-//==============================================================================
 void JSph::LoadMkInfo(const JSpaceParts *parts) {
     ResetMkInfo();
     MkListSize = parts->CountBlocks();
@@ -815,13 +812,8 @@ word JSph::CodeSetType(word code, TpParticle type, unsigned value) const {
     return (code & (~CODE_MASKTYPEVALUE) | tp | v);
 }
 
-//==============================================================================
-/// Carga el codigo de grupo de las particulas y marca las nout ultimas
-/// particulas como excluidas.
-///
-/// Loads the code of a particle group and flags the last "nout"
-/// particles as excluded.
-//==============================================================================
+
+/// 加载粒子组 Code 并将最后一个 nout 粒子标记为排除
 void JSph::LoadCodeParticles(unsigned np, const unsigned *idp, word *code) const {
     const char met[] = "LoadCodeParticles";
     //-Assigns code to each group of particles (moving & floating).
@@ -832,7 +824,7 @@ void JSph::LoadCodeParticles(unsigned np, const unsigned *idp, word *code) const
         const unsigned id = idp[p];
         word cod = 0;
         unsigned cmk = GetMkBlockById(id);
-        if (id < finfixed)cod = CodeSetType(cod, PART_BoundFx, cmk);
+        if (id < finfixed) cod = CodeSetType(cod, PART_BoundFx, cmk);
         else if (id < finmoving) {
             cod = CodeSetType(cod, PART_BoundMv, cmk - MkListFixed);
             if (cmk - MkListFixed >= MotionObjCount)RunException(met, "Motion code of particles was not found.");
@@ -944,9 +936,7 @@ void JSph::ConfigConstants(bool simulate2d) {
     VisuConfig();
 }
 
-//==============================================================================
-/// Prints out configuration of the case.
-//==============================================================================
+// 输出 Case 参数
 void JSph::VisuConfig() const {
     const char *met = "VisuConfig";
     Log->Print(Simulate2D ? "**2D-Simulation parameters:" : "**3D-Simulation parameters:");
@@ -1031,9 +1021,6 @@ void JSph::VisuConfig() const {
 }
 
 //==============================================================================
-/// Calcula celda de las particulas y comprueba que no existan mas particulas
-/// excluidas de las previstas.
-///
 /// Computes cell particles and checks if there are more particles
 /// excluded than expected.
 //==============================================================================
@@ -1425,20 +1412,14 @@ void JSph::PrintSizeNp(unsigned np, llong size) const {
                 double(size) / (1024 * 1024));
 }
 
-//==============================================================================
-/// Visualiza cabeceras de PARTs.
-/// Display headers of PARTs
-//==============================================================================
+// 打印 part 的头部信息
 void JSph::PrintHeadPart() {
     Log->Print("PART       PartTime      TotalSteps    Steps    Time/Sec   Finish time        ");
     Log->Print("=========  ============  ============  =======  =========  ===================");
     fflush(stdout);
 }
 
-//==============================================================================
-/// Establece configuracion para grabacion de particulas.
-/// Sets configuration for recordering of particles.
-//==============================================================================
+// 记录例子的配置
 void JSph::ConfigSaveData(unsigned piece, unsigned pieces, std::string div) {
     const char met[] = "ConfigSaveData";
     //-Configura objeto para grabacion de particulas e informacion.
@@ -1512,10 +1493,7 @@ tfloat3 *JSph::GetPointerDataFloat3(unsigned n, const tdouble3 *v) const {
     return (v2);
 }
 
-//==============================================================================
-/// Graba los ficheros de datos de particulas.
-/// Stores files of particle data.
-//==============================================================================
+// 存储粒子数据
 void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const tdouble3 *pos, const tfloat3 *vel,
                         const float *rhop, unsigned ndom, const tdouble3 *vdom, const StInfoPartPlus *infoplus) {
     //-Graba datos de particulas y/o informacion en formato bi4.

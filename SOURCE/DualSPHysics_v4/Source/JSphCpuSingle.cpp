@@ -62,7 +62,7 @@ void JSphCpuSingle::LoadConfig(JCfgRun *cfg){
   const char met[]="LoadConfig";
   // 载入 OpenMP 配置
   ConfigOmp(cfg);
-  // 载入基本参宿
+  // 载入基本参数
   JSph::LoadConfig(cfg);
   Log->Print("**Special case configuration is loaded");
 }
@@ -797,6 +797,7 @@ void JSphCpuSingle::Run(std::string appname,JCfgRun *cfg,JLog2 *log){
 
   // 载入参数
   LoadConfig(cfg);
+  // 载入粒子
   LoadCaseParticles();
   ConfigConstants(Simulate2D);
   ConfigDomain();
