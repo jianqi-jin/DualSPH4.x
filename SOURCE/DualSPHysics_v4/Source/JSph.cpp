@@ -1496,8 +1496,7 @@ tfloat3 *JSph::GetPointerDataFloat3(unsigned n, const tdouble3 *v) const {
 // 存储粒子数据
 void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const tdouble3 *pos, const tfloat3 *vel,
                         const float *rhop, unsigned ndom, const tdouble3 *vdom, const StInfoPartPlus *infoplus) {
-    //-Graba datos de particulas y/o informacion en formato bi4.
-    //-Stores particle data and/or information in bi4 format.
+    // 存储粒子信息并/或格式化为 bi4 格式
     if (DataBi4) {
         tfloat3 *posf3 = NULL;
         TimerPart.Stop();
@@ -1544,8 +1543,7 @@ void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const
         delete[] posf3;
     }
 
-    //-Graba ficheros VKT y/o CSV.
-    //-Stores VTK nd/or CSV files.
+    // 以 VTK nd/or CSV 格式存储粒子数据
     if ((SvData & SDAT_Csv) || (SvData & SDAT_Vtk)) {
         //-Genera array con posf3 y tipo de particula.
         //-Generates array with posf3 and type of particle.
@@ -1555,8 +1553,7 @@ void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const
             const unsigned id = idp[p];
             type[p] = (id >= CaseNbound ? 3 : (id < CaseNfixed ? 0 : (id < CaseNpb ? 1 : 2)));
         }
-        //-Define campos a grabar.
-        //-Defines fields to be stored.
+        // 定义被存储的字段
         JFormatFiles2::StScalarData fields[8];
         unsigned nfields = 0;
         if (idp) {
@@ -1579,14 +1576,12 @@ void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const
             JFormatFiles2::SaveVtk(DirOut + fun::FileNameSec("PartVtk.vtk", Part), npok, posf3, nfields, fields);
         if (SvData & SDAT_Csv)
             JFormatFiles2::SaveCsv(DirOut + fun::FileNameSec("PartCsv.csv", Part), npok, posf3, nfields, fields);
-        //-libera memoria.
-        //-release of memory.
+        // 释放内存
         delete[] posf3;
         delete[] type;
     }
 
-    //-Graba datos de particulas excluidas.
-    //-Stores data of excluded particles.
+    // 存储被排除的粒子
     if (DataOutBi4 && PartsOut->GetCount()) {
         if (SvDouble)
             DataOutBi4->SavePartOut(Part, TimeStep, PartsOut->GetCount(), PartsOut->GetIdpOut(), PartsOut->GetPosOut(),
@@ -1599,8 +1594,7 @@ void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const
         }
     }
 
-    //-Graba datos de floatings.
-    //-Stores data of floatings.
+    // 存储漂浮物数据
     if (DataFloatBi4) {
         if (CellOrder == ORDER_XYZ)
             for (unsigned cf = 0; cf < FtCount; cf++)
@@ -1613,37 +1607,29 @@ void JSph::SavePartData(unsigned npok, unsigned nout, const unsigned *idp, const
         DataFloatBi4->SavePartFloat(Part, TimeStep, (UseDEM ? DemDtForce : 0));
     }
 
-    //-Vacia almacen de particulas excluidas.
-    //-Empties stock of excluded particles.
+    // 清除漂浮物栈上的数据
     PartsOut->Clear();
 }
 
-//==============================================================================
-/// Genera los ficheros de salida de datos.
-/// Generates data output files.
-//==============================================================================
+// 输出文件
 void JSph::SaveData(unsigned npok, const unsigned *idp, const tdouble3 *pos, const tfloat3 *vel, const float *rhop,
                     unsigned ndom, const tdouble3 *vdom, const StInfoPartPlus *infoplus) {
     const char met[] = "SaveData";
     string suffixpartx = fun::PrintStr("_%04d", Part);
 
-    //-Contabiliza nuevas particulas excluidas.
-    //-Counts new excluded particles.
+    // 计算排除粒子的数目
     const unsigned noutpos = PartsOut->GetOutPosCount(), noutrhop = PartsOut->GetOutRhopCount(), noutmove = PartsOut->GetOutMoveCount();
     const unsigned nout = noutpos + noutrhop + noutmove;
     AddOutCount(noutpos, noutrhop, noutmove);
 
-    //-Graba ficheros con datos de particulas.
-    //-Stores data files of particles.
+    // 存储例子数据到part文件
     SavePartData(npok, nout, idp, pos, vel, rhop, ndom, vdom, infoplus);
 
-    //-Reinicia limites de dt.
-    //-Reinitialises limits of dt.
+    // 重新初始化dt的限制
     PartDtMin = DBL_MAX;
     PartDtMax = -DBL_MAX;
 
-    //-Calculo de tiempo.
-    //-Computation of time.
+    // 计算耗时
     if (Part > PartIni || Nstep) {
         TimerPart.Stop();
         double tpart = TimerPart.GetElapsedTimeD() / 1000;
@@ -1655,8 +1641,7 @@ void JSph::SaveData(unsigned npok, const unsigned *idp, const tdouble3 *pos, con
                     Nstep - PartNstep, tseg, fun::GetDateTimeAfter(int(tleft)).c_str());
     } else Log->Printf("Part%s        %u particles successfully stored", suffixpartx.c_str(), npok);
 
-    //-Muestra info de particulas excluidas
-    //-Shows info of the excluded particles
+    // 打印排除粒子的信息
     if (nout) {
         PartOut += nout;
         Log->Printf("  Particles out: %u  (total: %u)", nout, PartOut);
@@ -1665,10 +1650,7 @@ void JSph::SaveData(unsigned npok, const unsigned *idp, const tdouble3 *pos, con
     if (SvDomainVtk)SaveDomainVtk(ndom, vdom);
 }
 
-//==============================================================================
-/// Genera fichero VTK con el dominio de las particulas.
-/// Generates VTK file with domain of the particles.
-//==============================================================================
+// 生成包含粒子主体的VTK文件
 void JSph::SaveDomainVtk(unsigned ndom, const tdouble3 *vdom) const {
     if (vdom) {
         string fname = fun::FileNameSec("Domain.vtk", Part);
@@ -1679,19 +1661,13 @@ void JSph::SaveDomainVtk(unsigned ndom, const tdouble3 *vdom) const {
     }
 }
 
-//==============================================================================
-/// Genera fichero VTK con las celdas del mapa.
-/// Generates VTK file with map cells.
-//==============================================================================
+// Generates VTK file with map cells
 void JSph::SaveMapCellsVtk(float scell) const {
     JFormatFiles2::SaveVtkCells(DirOut + "MapCells.vtk", ToTFloat3(OrderDecode(MapRealPosMin)), OrderDecode(Map_Cells),
                                 scell);
 }
 
-//==============================================================================
-/// A�ade la informacion basica de resumen a hinfo y dinfo.
-/// Adds basic information of resume to hinfo & dinfo.
-//==============================================================================
+// Adds basic information of resume to hinfo & dinfo
 void
 JSph::GetResInfo(float tsim, float ttot, const std::string &headplus, const std::string &detplus, std::string &hinfo,
                  std::string &dinfo) {
@@ -1714,10 +1690,7 @@ JSph::GetResInfo(float tsim, float ttot, const std::string &headplus, const std:
             ";" + GetNameCellMode(CellMode) + detplus;
 }
 
-//==============================================================================
-/// Genera fichero Run.csv con resumen de ejecucion.
-/// Generates file Run.csv with resume of execution.
-//==============================================================================
+// Generates file Run.csv with resume of execution
 void JSph::SaveRes(float tsim, float ttot, const std::string &headplus, const std::string &detplus) {
     const char *met = "SaveRes";
     string fname = DirOut + "Run.csv";
@@ -1732,10 +1705,7 @@ void JSph::SaveRes(float tsim, float ttot, const std::string &headplus, const st
     } else RunException(met, "File could not be opened.", fname);
 }
 
-//==============================================================================
-/// Muestra resumen de ejecucion.
-/// Shows resume of execution.
-//==============================================================================
+// Shows resume of execution
 void JSph::ShowResume(bool stop, float tsim, float ttot, bool all, std::string infoplus) {
     Log->Printf("\n[Simulation %s  %s]", (stop ? "INTERRUPTED" : "finished"), fun::GetDateTime().c_str());
     Log->Printf("Particles of simulation (initial): %u", CaseNp);
@@ -1860,8 +1830,3 @@ std::string JSph::TimerToText(const std::string &name, float value) {
     while (ret.length() < 33)ret += ".";
     return (ret + ": " + fun::FloatStr(value / 1000) + " sec.");
 }
-
-
-
-
-
