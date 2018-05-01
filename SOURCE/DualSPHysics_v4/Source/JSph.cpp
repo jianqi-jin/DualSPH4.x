@@ -278,6 +278,7 @@ void JSph::LoadConfig(const JCfgRun *cfg) {
     Psimple = true;
     SvDouble = false; //-Options by default.
 
+    // 输出和Case文件目录
     DirOut = fun::GetDirWithSlash(cfg->DirOut);
     CaseName = cfg->CaseName;
     DirCase = fun::GetDirWithSlash(fun::GetDirParent(CaseName));
@@ -285,6 +286,8 @@ void JSph::LoadConfig(const JCfgRun *cfg) {
 
     if (!CaseName.length())
         RunException(met, "Name of the case for execution was not indicated.");
+
+    // Part文件目录
     RunName = (cfg->RunName.length() ? cfg->RunName : CaseName);
     PartBeginDir = cfg->PartBeginDir;
     PartBegin = cfg->PartBegin;
