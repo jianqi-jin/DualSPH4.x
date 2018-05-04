@@ -320,7 +320,7 @@ void JSph::LoadConfig(const JCfgRun *cfg) {
 
     LoadCaseConfig();
 
-    //-Aplies configuration using command line.
+    // 载入通过命令行传入的参数
     if (cfg->PosDouble == 0) {
         Psimple = true;
         SvDouble = false;

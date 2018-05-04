@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <case>
     <casedef>
+        <!--环境常量-->
         <constantsdef>
             <lattice bound="1" fluid="1" />			
             <gravity x="0" y="0" z="-9.81" comment="Gravitational acceleration" units_comment="m/s^2" />
@@ -13,7 +14,9 @@
             <coefh value="0.8" comment="Coefficient to calculate the smoothing length (h=coefh*sqrt(3*dp^2) in 3D)" />		
             <cflnumber value="0.25" comment="Coefficient to multiply dt" />	
         </constantsdef>
+        <!--bundle配置-->
         <mkconfig boundcount="2" fluidcount="2" />
+        <!--容器配置-->
         <geometry>
             <definition dp="0.02" units_comment="metres (m)">
                 <pointmin x="-1.0" y="-1.0" z="-1.0" />
@@ -68,10 +71,13 @@
                 </accinput>
             </accinputs>
         </special>
+        <!--定义参数-->
         <parameters>
-            <parameter key="PosDouble" value="1" comment="Precision in particle interaction 0:Simple, 1:Double, 2:Uses and saves double (default=0)" />		
+            <!--精度-->
+            <parameter key="PosDouble" value="1" comment="Precision in particle interaction 0:Simple, 1:Double, 2:Uses and saves double (default=0)" />
             <parameter key="StepAlgorithm" value="2" comment="Step Algorithm 1:Verlet, 2:Symplectic (default=1)" />
             <parameter key="VerletSteps" value="40" comment="Verlet only: Number of steps to apply Euler timestepping (default=40)" />
+            <!--核心函数-->
             <parameter key="Kernel" value="2" comment="Interaction Kernel 1:Cubic Spline, 2:Wendland (default=2)" />
             <parameter key="ViscoTreatment" value="1" comment="Viscosity formulation 1:Artificial, 2:Laminar+SPS (default=1)" />
             <parameter key="Visco" value="0.1" comment="Viscosity value" /> % Note alpha can depend on the resolution. A value of 0.01 is recommended for near irrotational flows.

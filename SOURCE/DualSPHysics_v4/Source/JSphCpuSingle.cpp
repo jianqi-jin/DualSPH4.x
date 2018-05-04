@@ -36,7 +36,7 @@ JSphCpuSingle::~JSphCpuSingle() {
 // 返回在CPU中保留的内存
 llong JSphCpuSingle::GetAllocMemoryCpu() const {
     llong s = JSphCpu::GetAllocMemoryCpu();
-    //Reservada en otros objetos
+    // Reservada en otros objetos
     if (CellDivSingle)s += CellDivSingle->GetAllocMemory();
     if (PartsLoaded)s += PartsLoaded->GetAllocMemory();
     return (s);
@@ -94,7 +94,7 @@ void JSphCpuSingle::LoadCaseParticles() {
     if (PeriX)PeriXinc.x = -MapRealSize.x;
     if (PeriY)PeriYinc.y = -MapRealSize.y;
     if (PeriZ)PeriZinc.z = -MapRealSize.z;
-    //-Calculate simulation limits with periodic boundaries / Calcula limites de simulacion con bordes periodicos.
+    // 计算模拟的周期边界限制
     Map_PosMin = MapRealPosMin;
     Map_PosMax = MapRealPosMax;
     float dosh = float(H * 2);

@@ -20,7 +20,7 @@ protected:
   JCellDivCpuSingle* CellDivSingle;
   JPartsLoad4* PartsLoaded;
 
-  llong GetAllocMemoryCpu()const;
+  llong GetAllocMemoryCpu() const;
   void UpdateMaxValues();
   void LoadConfig(JCfgRun *cfg);
   void LoadCaseParticles();
