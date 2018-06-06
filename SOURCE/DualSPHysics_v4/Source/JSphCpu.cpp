@@ -420,7 +420,7 @@ void JSphCpu::InitRun() {
     }
 
     //-Uses Inlet information from PART read.
-    if (PartBeginTimeStep && PartBeginTotalNp) {
+    if (PartBeginTimeStep && PartBeginGetMovTotalNp) {
         TotalNp = PartBeginTotalNp;
         IdMax = unsigned(TotalNp - 1);
     }
@@ -2126,10 +2126,7 @@ void JSphCpu::Interaction_Forces(unsigned np, unsigned npb, unsigned npbok, tuin
     }
 }
 
-//==============================================================================
-/// Seleccion de parametros template para Interaction_ForcesX.
-/// Selection of template parameters for Interaction_ForcesX.
-//==============================================================================
+// 为Interaction_ForcesX选择模板参数
 void
 JSphCpu::InteractionSimple_Forces(unsigned np, unsigned npb, unsigned npbok, tuint3 ncells, const unsigned *begincell,
                                   tuint3 cellmin, const unsigned *dcell, const tfloat3 *pspos, const tfloat4 *velrhop,
@@ -3453,8 +3450,8 @@ void JSphCpu::RunMotion(double stepdt) {
                 tdouble3 mvsimple;
                 tmatrix4d mvmatrix;
                 if (Motion->GetMov(c, ref, mvsimple, mvmatrix)) {//-Single movement / Movimiento simple
-                    const unsigned pini = MotionObjBegin[ref] - CaseNfixed, np =
-                            MotionObjBegin[ref + 1] - MotionObjBegin[ref];
+                    const unsigned pini = MotionObjBegin[ref] - CaseNfixed,
+                            np = MotionObjBegin[ref + 1] - MotionObjBegin[ref];
                     mvsimple = OrderCode(mvsimple);
                     if (Simulate2D)mvsimple.y = 0;
                     const tfloat3 mvvel = ToTFloat3(mvsimple / TDouble3(stepdt));

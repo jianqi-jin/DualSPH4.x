@@ -59,7 +59,7 @@ int main(int argc, char** argv){
   JLog2 log;
   try{
     cfg.LoadArgv(argc,argv);
-    //cfg.VisuConfig();
+    // cfg.VisuConfig();
     if(!cfg.PrintInfo){
       log.Init(cfg.DirOut+"/Run.out");
       log.Print(license,JLog2::Out_File);
@@ -69,7 +69,7 @@ int main(int argc, char** argv){
       #ifndef _WITHGPU
         cfg.Cpu=true;
       #endif
-      if(cfg.Cpu){
+      if(cfg.Cpu) {
         // 声明 SPH 类型
         JSphCpuSingle sph;
         // 调用 CPU 计算
@@ -96,11 +96,8 @@ int main(int argc, char** argv){
     string tx=string("\n*** ")+e.what()+"\n";
     if(log.IsOk())log.Print(tx); else printf("%s",tx.c_str());
   }
-  catch(...){
+  catch(...) {
     printf("\n*** Attention: Unknown exception...\n");
   }
   return(errcode);
 }
-
-
-

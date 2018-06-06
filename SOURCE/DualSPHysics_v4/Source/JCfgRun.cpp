@@ -38,7 +38,7 @@ JCfgRun::JCfgRun(){
 //==============================================================================
 /// Initialisation of variables.
 //==============================================================================
-void JCfgRun::Reset(){
+void JCfgRun::Reset() {
   PrintInfo=false; SvDef=false; DirsDef=0;
   Cpu=false;
   Gpu=false; GpuId=-1; GpuFree=false;

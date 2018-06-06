@@ -29,6 +29,7 @@
                         <point x="0" y="0" z="0" />
                         <size x="0.4" y="0.67" z="0.3" />
                     </drawbox>
+
                     <setmkbound mk="0" />
                     <drawbox>
                         <boxfill>bottom | left | right | front | back</boxfill>
@@ -36,12 +37,15 @@
                         <size x="1.6" y="0.67" z="0.4" />
                     </drawbox>
                     <shapeout file="Box"/>
-                    <setmkvoid />
-                    <drawbox>
-                        <boxfill>solid</boxfill>
-                        <point x="0.9" y="0.24" z="0" />
-                        <size x="0.12" y="0.12" z="0.45" />
-                    </drawbox>
+                    
+                    <setmkbound mk="20" />
+                    <setdrawmode mode="full"/>
+                    <setshapemode>real | bound</setshapemode>
+                    <drawcylinder radius="0.12">
+                        <point x="0.15" y="0.3" z="0"/>
+                        <point x="0.15" y="0.3" z="0.45"/>
+                    </drawcylinder>
+
                     <setmkbound mk="1" />
                     <drawbox>
                         <boxfill>top | left | right | front | back</boxfill>
@@ -49,6 +53,7 @@
                         <size x="0.12" y="0.12" z="0.45" />
                     </drawbox>
                     <setmkbound mk="10" />
+
                     <drawbox>
                         <boxfill>left</boxfill>
                         <point x="0.9" y="0.24" z="0" />
@@ -58,6 +63,9 @@
                 </mainlist>
             </commands>
         </geometry>
+        <floatings>
+            <floating mkbound="20" relativeweight="0.5"></floating>
+        </floatings>
     </casedef>
     <execution>
         <parameters>

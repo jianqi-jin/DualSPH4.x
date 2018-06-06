@@ -31,6 +31,7 @@
                         <point x="-0.015" y="0" z="0" />
                         <size x="0.015" y="2" z="0.6" />
                     </drawbox>
+
                     <setmkbound mk="0" />
                     <drawbeach mask="1|2|6">		
                         <point x="-0.2" y="2" z="0" />

@@ -18,14 +18,18 @@
 using namespace std;
 
 
-// 构造器
+/*
+ * @desc 构造器
+ */
 JSphCpuSingle::JSphCpuSingle() : JSphCpu(false) {
     ClassName = "JSphCpuSingle";
     CellDivSingle = NULL;
     PartsLoaded = NULL;
 }
 
-// 析构函数
+/*
+ * @desc 析构函数
+ */
 JSphCpuSingle::~JSphCpuSingle() {
     delete CellDivSingle;
     CellDivSingle = NULL;
@@ -33,7 +37,9 @@ JSphCpuSingle::~JSphCpuSingle() {
     PartsLoaded = NULL;
 }
 
-// 返回在CPU中保留的内存
+/*
+ * @desc 返回在CPU中保留的内存
+ */
 llong JSphCpuSingle::GetAllocMemoryCpu() const {
     llong s = JSphCpu::GetAllocMemoryCpu();
     // Reservada en otros objetos
@@ -42,7 +48,9 @@ llong JSphCpuSingle::GetAllocMemoryCpu() const {
     return (s);
 }
 
-// 更新内存，粒子和cell的最大值
+/*
+ * @desc 更新内存，粒子和cell的最大值
+ */
 void JSphCpuSingle::UpdateMaxValues() {
     MaxParticles = max(MaxParticles, Np);
     if (CellDivSingle)MaxCells = max(MaxCells, CellDivSingle->GetNct());
@@ -51,7 +59,9 @@ void JSphCpuSingle::UpdateMaxValues() {
 }
 
 
-// 载入参数的 Helper
+/*
+ * @desc 载入参数的 Helper
+ */
 void JSphCpuSingle::LoadConfig(JCfgRun *cfg) {
     const char met[] = "LoadConfig";
     // 载入 OpenMP 配置(多线程)
@@ -62,7 +72,9 @@ void JSphCpuSingle::LoadConfig(JCfgRun *cfg) {
     Log->Print("**Special case configuration is loaded");
 }
 
-// 加载case和process的粒子
+/*
+ * @desc 加载case和process的粒子
+ */
 void JSphCpuSingle::LoadCaseParticles() {
     Log->Print("Loading initial state of particles...");
     PartsLoaded = new JPartsLoad4;
@@ -113,44 +125,48 @@ void JSphCpuSingle::LoadCaseParticles() {
     Map_Size = Map_PosMax - Map_PosMin;
 }
 
-/// Configuration of present domain.
+/*
+ * @desc 当前域的配置
+ */
 void JSphCpuSingle::ConfigDomain() {
     const char *met = "ConfigDomain";
-    //-Calculate number of particles / Calcula numero de particulas.
+    // 计算粒子数量
     Np = PartsLoaded->GetCount();
     Npb = CaseNpb;
     NpbOk = Npb;
-    //-Allocates fixed memory for moving & floating particles / Reserva memoria fija para moving y floating.
+    // 为移动和浮动粒子分配固定内存
     AllocCpuMemoryFixed();
-    //-Allocates memory in CPU for particles / Reserva memoria en Cpu para particulas.
+    // 分配CPU中的内存以获取粒子
     AllocCpuMemoryParticles(Np, 0);
 
-    //-Copy particle values / Copia datos de particulas.
+    // 复制粒子值
     ReserveBasicArraysCpu();
     memcpy(Posc, PartsLoaded->GetPos(), sizeof(tdouble3) * Np);
     memcpy(Idpc, PartsLoaded->GetIdp(), sizeof(unsigned) * Np);
     memcpy(Velrhopc, PartsLoaded->GetVelRhop(), sizeof(tfloat4) * Np);
 
-    //-Calculate floating radius / Calcula radio de floatings.
-    if (CaseNfloat && PeriActive != 0 && !PartBegin)CalcFloatingRadius(Np, Posc, Idpc);
+    // 计算浮动半径
+    if (CaseNfloat && PeriActive != 0 && !PartBegin) {
+        CalcFloatingRadius(Np, Posc, Idpc);
+    }
 
-    //-Load particle data / Carga code de particulas.
+    // 加载粒子数据
     LoadCodeParticles(Np, Idpc, Codec);
 
-    //-Free memory of PartsLoaded / Libera memoria de PartsLoaded.
+    // 释放内存
     delete PartsLoaded;
     PartsLoaded = NULL;
-    //-Apply configuration of CellOrder / Aplica configuracion de CellOrder.
+    // 应用CellOrder的配置
     ConfigCellOrder(CellOrder, Np, Posc, Velrhopc);
 
-    //-Configure cells division / Configura division celdas.
+    // 配置 cells division
     ConfigCellDivision();
-    //-Establish local simulation domain inside of Map_Cells & calculate DomCellCode / Establece dominio de simulacion local dentro de Map_Cells y calcula DomCellCode.
+    // 在Map_Cells内部建立本地仿真域并计算DomCellCode
     SelecDomain(TUint3(0, 0, 0), Map_Cells);
-    //-Calculate initial cell of particles and check if there are unexpected excluded particles / Calcula celda inicial de particulas y comprueba si hay excluidas inesperadas.
+    // 计算粒子的初始单元格，并检查是否有意外排除的粒子
     LoadDcellParticles(Np, Codec, Posc, Dcellc);
 
-    //-Create object for divide in CPU & select a valid cellmode / Crea objeto para divide en Gpu y selecciona un cellmode valido.
+    // 创建用于在CPU中划分的对象并选择有效的单元模式
     CellDivSingle = new JCellDivCpuSingle(Stable, FtCount != 0, PeriActive, CellOrder, CellMode, Scell, Map_PosMin,
                                           Map_PosMax, Map_Cells, CaseNbound, CaseNfixed, CaseNpb, Log, DirOut);
     CellDivSingle->DefineDomain(DomCellCode, DomCelIni, DomCelFin, DomPosMin, DomPosMax);
@@ -158,18 +174,14 @@ void JSphCpuSingle::ConfigDomain() {
 
     ConfigSaveData(0, 1, "");
 
-    //-Reorder particles for cell / Reordena particulas por celda.
+    // 为cell重新排序粒子
     BoundChanged = true;
     RunCellDivide(true);
 }
 
-//==============================================================================
-/// Redimensiona el espacio reservado para particulas en CPU midiendo el
-/// tiempo consumido con TMC_SuResizeNp. Al terminar actualiza el divide.
-///
-/// Redimension space reserved for particles in CPU, measure 
-/// time consumed using TMC_SuResizeNp. On finishing, update divide.
-//==============================================================================
+/*
+ * @desc 为CPU中的粒子保留的Redimension空间，测量使用TMC_SuResizeNp消耗的时间。完成后，更新划分。
+ */
 void JSphCpuSingle::ResizeParticlesSize(unsigned newsize, float oversize, bool updatedivide) {
     TmcStart(Timers, TMC_SuResizeNp);
     newsize += (oversize > 0 ? unsigned(oversize * newsize) : 0);
@@ -178,13 +190,11 @@ void JSphCpuSingle::ResizeParticlesSize(unsigned newsize, float oversize, bool u
     if (updatedivide)RunCellDivide(true);
 }
 
-//==============================================================================
-/// Crea lista de nuevas particulas periodicas a duplicar.
-/// Con stable activado reordena lista de periodicas.
-///
-/// Create list of new periodic particles to duplicate.
-/// With stable activated reordered list of periodic particles.
-//==============================================================================
+/*
+ * @desc
+ * 创建要复制的新的周期性粒子列表
+ * 具有稳定的激活重新排序的周期性粒子列表
+ */
 unsigned JSphCpuSingle::PeriodicMakeList(unsigned n, unsigned pini, bool stable, unsigned nmax, tdouble3 perinc,
                                          const tdouble3 *pos, const word *code, unsigned *listp) const {
     unsigned count = 0;
@@ -220,21 +230,13 @@ unsigned JSphCpuSingle::PeriodicMakeList(unsigned n, unsigned pini, bool stable,
     return (count);
 }
 
-//==============================================================================
-/// Duplica la posicion de la particula indicada aplicandole un desplazamiento.
-/// Las particulas duplicadas se considera que siempre son validas y estan dentro
-/// del dominio.
-/// Este kernel vale para single-cpu y multi-cpu porque los calculos se hacen 
-/// a partir de domposmin.
-/// Se controla que las coordendas de celda no sobrepasen el maximo.
-///
-/// Duplicate the indicated particle position applying displacement.
-/// Duplicated particles are considered to be always valid and are inside
-/// of the domain.
-/// This kernel works for single-cpu & multi-cpu because the computations are done  
-/// starting from domposmin.
-/// It is controlled that the coordinates of the cell do not exceed the maximum.
-//==============================================================================
+/*
+ * @desc
+ * 应用位移复制指定的粒子位置
+ * 重复的粒子被认为总是有效的并且在域内
+ * 此内核适用于单CPU和多CPU，因为计算是从domposmin开始的
+ * 控制单元坐标不超过最大值
+ */
 void JSphCpuSingle::PeriodicDuplicatePos(unsigned pnew, unsigned pcopy, bool inverse, double dx, double dy, double dz,
                                          tuint3 cellmax, tdouble3 *pos, unsigned *dcell) const {
     //-Get pos of particle to be duplicated / Obtiene pos de particula a duplicar.
@@ -256,15 +258,12 @@ void JSphCpuSingle::PeriodicDuplicatePos(unsigned pnew, unsigned pcopy, bool inv
     dcell[pnew] = PC__Cell(DomCellCode, cx, cy, cz);
 }
 
-//==============================================================================
-/// Crea particulas periodicas a partir de una lista con las particulas a duplicar.
-/// Se presupone que todas las particulas son validas.
-/// Este kernel vale para single-cpu y multi-cpu porque usa domposmin. 
-///
-/// Create periodic particles starting from a list of the particles to duplicate.
-/// Assume that all the particles are valid.
-/// This kernel works for single-cpu & multi-cpu because it uses domposmin.
-//==============================================================================
+/*
+ * @desc
+ * 从要复制的粒子列表开始创建周期性粒子
+ * 假设所有的粒子都是有效的
+ * 此内核适用于单CPU和多CPU，因为它使用 domposmin
+ */
 void JSphCpuSingle::PeriodicDuplicateVerlet(unsigned np, unsigned pini, tuint3 cellmax, tdouble3 perinc,
                                             const unsigned *listp, unsigned *idp, word *code, unsigned *dcell,
                                             tdouble3 *pos, tfloat4 *velrhop, tsymatrix3f *spstau,
@@ -288,15 +287,12 @@ void JSphCpuSingle::PeriodicDuplicateVerlet(unsigned np, unsigned pini, tuint3 c
     }
 }
 
-//==============================================================================
-/// Crea particulas periodicas a partir de una lista con las particulas a duplicar.
-/// Se presupone que todas las particulas son validas.
-/// Este kernel vale para single-cpu y multi-cpu porque usa domposmin. 
-///
-/// Create periodic particles starting from a list of the particles to duplicate.
-/// Assume that all the particles are valid.
-/// This kernel works for single-cpu & multi-cpu because it uses domposmin.
-//==============================================================================
+/*
+ * @desc
+ * 从要复制的粒子列表开始创建周期性粒子
+ * 假设所有的粒子都是有效的
+ * 此内核适用于单CPU和多CPU，因为它使用 domposmin
+ */
 void JSphCpuSingle::PeriodicDuplicateSymplectic(unsigned np, unsigned pini, tuint3 cellmax, tdouble3 perinc,
                                                 const unsigned *listp, unsigned *idp, word *code, unsigned *dcell,
                                                 tdouble3 *pos, tfloat4 *velrhop, tsymatrix3f *spstau, tdouble3 *pospre,
@@ -321,19 +317,15 @@ void JSphCpuSingle::PeriodicDuplicateSymplectic(unsigned np, unsigned pini, tuin
     }
 }
 
-//==============================================================================
-/// Crea particulas duplicadas de condiciones periodicas.
-/// Crea nuevas particulas periodicas y marca las viejas para ignorarlas.
-/// Las nuevas periodicas se situan a partir del Np de entrada, primero las NpbPer
-/// de contorno y despues las NpfPer fluidas. El Np de salida contiene tambien las
-/// nuevas periodicas.
-///
-/// Create duplicate particles for periodic conditions.
-/// Create new periodic particles and mark the old ones to be ignored.
-/// New periodic particles are created from Np of the beginning, first the NpbPer
-/// of the boundry and then the NpfPer fluid ones. The Np of the those leaving contains also the
-/// new periodic ones.
-//==============================================================================
+/*
+ * @desc
+ * 为周期性条件创建重复的粒子
+ * 创建新的周期性粒子并将其标记为忽略
+ * 从周围的Np开始创建新的周期性粒子
+ * 首先是NpbPer边界
+ * 然后是NpfPer流体
+ * 那些离开的粒子的Np也包含了新的周期性的粒子
+ */
 void JSphCpuSingle::RunPeriodic() {
     const char met[] = "RunPeriodic";
     TmcStart(Timers, TMC_SuPeriodic);
@@ -416,10 +408,9 @@ void JSphCpuSingle::RunPeriodic() {
     TmcStop(Timers, TMC_SuPeriodic);
 }
 
-//==============================================================================
-/// Ejecuta divide de particulas en celdas.
-/// Execute divide of particles in cells.
-//==============================================================================
+/*
+ * @desc 执行cell中的粒子分割
+ */
 void JSphCpuSingle::RunCellDivide(bool updateperiodic) {
     const char met[] = "RunCellDivide";
     //-Create new periodic particles & mark the old ones to be ignored / Crea nuevas particulas periodicas y marca las viejas para ignorarlas.
@@ -474,10 +465,9 @@ void JSphCpuSingle::RunCellDivide(bool updateperiodic) {
     BoundChanged = false;
 }
 
-//------------------------------------------------------------------------------
-/// Devuelve limites de celdas para interaccion.
-/// Return cell limits for interaction.
-//------------------------------------------------------------------------------
+/*
+ * @desc 返回相互作用的cell限制
+ */
 void JSphCpuSingle::GetInteractionCells(unsigned rcell, int hdiv, const tint4 &nc, const tint3 &cellzero, int &cxini,
                                         int &cxfin, int &yini, int &yfin, int &zini, int &zfin) const {
     //-Get interaction limits / Obtiene limites de interaccion
@@ -493,28 +483,28 @@ void JSphCpuSingle::GetInteractionCells(unsigned rcell, int hdiv, const tint4 &n
     zfin = cz + min(nc.z - cz - 1, hdiv) + 1;
 }
 
-//==============================================================================
-/// Interaccion para el calculo de fuerzas.
-/// Interaction to calculate forces.
-//==============================================================================
+/*
+ * @desc 计算相互作用受力
+ */
 void JSphCpuSingle::Interaction_Forces(TpInter tinter) {
     const char met[] = "Interaction_Forces";
     PreInteraction_Forces(tinter);
     TmcStart(Timers, TMC_CfForces);
 
-    //-Interaction of Fluid-Fluid/Bound & Bound-Fluid (forces and DEM) / Interaccion Fluid-Fluid/Bound & Bound-Fluid (forces and DEM).
+    // 流体/束缚和束缚流体（力和DEM）的相互作用
     float viscdt = 0;
-    if (Psimple)
+    if (Psimple) {
         JSphCpu::InteractionSimple_Forces(Np, Npb, NpbOk, CellDivSingle->GetNcells(), CellDivSingle->GetBeginCell(),
                                           CellDivSingle->GetCellDomainMin(), Dcellc, PsPosc, Velrhopc, Idpc, Codec,
                                           Pressc, viscdt, Arc, Acec, Deltac, SpsTauc, SpsGradvelc, ShiftPosc,
                                           ShiftDetectc);
-    else
+    } else {
         JSphCpu::Interaction_Forces(Np, Npb, NpbOk, CellDivSingle->GetNcells(), CellDivSingle->GetBeginCell(),
                                     CellDivSingle->GetCellDomainMin(), Dcellc, Posc, Velrhopc, Idpc, Codec, Pressc,
                                     viscdt, Arc, Acec, Deltac, SpsTauc, SpsGradvelc, ShiftPosc, ShiftDetectc);
+    }
 
-    //-For 2-D simulations zero the 2nd component / Para simulaciones 2D anula siempre la 2� componente
+    // 对于二维模拟，将第二个分量归零
     if (Simulate2D) {
         const int ini = int(Npb), fin = int(Np), npf = int(Np - Npb);
 #ifdef _WITHOMP
@@ -523,7 +513,7 @@ void JSphCpuSingle::Interaction_Forces(TpInter tinter) {
         for (int p = ini; p < fin; p++)Acec[p].y = 0;
     }
 
-    //-Add Delta-SPH correction to Arg[] / A�ade correccion de Delta-SPH a Arg[].
+    // 将Delta-SPH更正添加到Arg []
     if (Deltac) {
         const int ini = int(Npb), fin = int(Np), npf = int(Np - Npb);
 #ifdef _WITHOMP
@@ -532,18 +522,17 @@ void JSphCpuSingle::Interaction_Forces(TpInter tinter) {
         for (int p = ini; p < fin; p++)if (Deltac[p] != FLT_MAX)Arc[p] += Deltac[p];
     }
 
-    //-Calculates maximum value of ViscDt.
+    // 计算 ViscDt 的最大值
     ViscDtMax = viscdt;
-    //-Calculates maximum value of Ace.
+    // 计算 Ace 的最大值
     AceMax = ComputeAceMaxOmp(PeriActive != 0, Np - Npb, Acec + Npb, Codec + Npb);
 
     TmcStop(Timers, TMC_CfForces);
 }
 
-//==============================================================================
-/// Devuelve el valor maximo de ace (modulo).
-/// Returns maximum value of ace (modulus).
-//==============================================================================
+/*
+ * @desc 返回 ace（模数）的最大值。
+ */
 double
 JSphCpuSingle::ComputeAceMaxSeq(const bool checkcodenormal, unsigned np, const tfloat3 *ace, const word *code) const {
     float acemax = 0;
@@ -558,10 +547,9 @@ JSphCpuSingle::ComputeAceMaxSeq(const bool checkcodenormal, unsigned np, const t
     return (sqrt(double(acemax)));
 }
 
-//==============================================================================
-/// Devuelve el valor maximo de ace (modulo) using OpenMP.
-/// Returns maximum value of ace (modulus) using OpenMP.
-//==============================================================================
+/*
+ * @desc 返回使用 OpenMP 时 ace（模数）的最大值。
+ */
 double
 JSphCpuSingle::ComputeAceMaxOmp(const bool checkcodenormal, unsigned np, const tfloat3 *ace, const word *code) const {
     const char met[] = "ComputeAceMaxOmp";
@@ -597,13 +585,9 @@ JSphCpuSingle::ComputeAceMaxOmp(const bool checkcodenormal, unsigned np, const t
     return (acemax);
 }
 
-//==============================================================================
-/// Realiza interaccion y actualizacion de particulas segun las fuerzas 
-/// calculadas en la interaccion usando Verlet.
-///
-/// Perform interactions and updates of particles according to forces 
-/// calculated in the interaction using Verlet.
-//==============================================================================
+/*
+ * @desc 根据受力执行粒子的交互和更新, 使用 Verlet 执行计算
+ */
 double JSphCpuSingle::ComputeStep_Ver() {
     Interaction_Forces(INTER_Forces);    //-Interaction / Interaccion
     const double dt = DtVariable(true);    //-Calculate new dt / Calcula nuevo dt
@@ -615,13 +599,9 @@ double JSphCpuSingle::ComputeStep_Ver() {
     return (dt);
 }
 
-//==============================================================================
-/// Realiza interaccion y actualizacion de particulas segun las fuerzas 
-/// calculadas en la interaccion usando Symplectic.
-///
-/// Perform interactions and updates of particles according to forces 
-/// calculated in the interaction using Symplectic.
-//==============================================================================
+/*
+ * @desc 根据受力执行粒子的交互和更新, 使用 Symplectic 执行计算
+ */
 double JSphCpuSingle::ComputeStep_Sym() {
     const double dt = DtPre;
     //-Predictor
@@ -650,10 +630,9 @@ double JSphCpuSingle::ComputeStep_Sym() {
     return (dt);
 }
 
-//==============================================================================
-/// Calcula distancia entre pariculas floatin y centro segun condiciones periodicas.
-/// Calculate distance between floating particles & centre according to periodic conditions.
-//==============================================================================
+/*
+ * @desc 根据周期性条件计算浮动粒子与中心之间的距离
+ */
 tfloat3 JSphCpuSingle::FtPeriodicDist(const tdouble3 &pos, const tdouble3 &center, float radius) const {
     tdouble3 distd = (pos - center);
     if (PeriX && fabs(distd.x) > radius) {
@@ -671,9 +650,9 @@ tfloat3 JSphCpuSingle::FtPeriodicDist(const tdouble3 &pos, const tdouble3 &cente
     return (ToTFloat3(distd));
 }
 
-//==============================================================================
-/// Calculate forces around floating object particles / Calcula fuerzas sobre floatings.
-//==============================================================================
+/*
+ * @desc 计算浮动物体周围的力
+ */
 void JSphCpuSingle::FtCalcForces(StFtoForces *ftoforces) const {
     const int ftcount = int(FtCount);
 #ifdef _WITHOMP
@@ -744,9 +723,9 @@ void JSphCpuSingle::FtCalcForces(StFtoForces *ftoforces) const {
     }
 }
 
-//==============================================================================
-/// Process floating objects / Procesa floating objects.
-//==============================================================================
+/*
+ * @desc 处理浮动对象
+ */
 void JSphCpuSingle::RunFloating(double dt, bool predictor) {
     const char met[] = "RunFloating";
     if (TimeStep >=
@@ -901,7 +880,9 @@ void JSphCpuSingle::Run(std::string appname, JCfgRun *cfg, JLog2 *log) {
     FinishRun(partoutstop);
 }
 
-// 生成输出文件
+/*
+ * @desc 生成输出文件
+ */
 void JSphCpuSingle::SaveData() {
     const bool save = (SvData != SDAT_None && SvData != SDAT_Info);
     // 保持周期性粒子 如果存在
@@ -950,7 +931,9 @@ void JSphCpuSingle::SaveData() {
     TmcStop(Timers, TMC_SuSavePart);
 }
 
-// 模拟计算完成, 打印总览信息
+/*
+ * @desc 模拟计算完成, 打印总览信息
+ */
 void JSphCpuSingle::FinishRun(bool stop) {
     float tsim = TimerSim.GetElapsedTimeF() / 1000.f, ttot = TimerTot.GetElapsedTimeF() / 1000.f;
     JSph::ShowResume(stop, tsim, ttot, true, "");
@@ -962,4 +945,3 @@ void JSphCpuSingle::FinishRun(bool stop) {
     Log->Print(" ");
     if (SvRes)SaveRes(tsim, ttot, hinfo, dinfo);
 }
-
